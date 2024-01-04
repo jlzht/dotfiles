@@ -1,0 +1,9 @@
+# Default settings for user directories
+DESKTOP=desktop
+DOWNLOAD=download
+TEMPLATES=program
+PUBLICSHARE=public
+DOCUMENTS=document
+MUSIC=document/music
+PICTURES=document/image
+VIDEOS=document/video
