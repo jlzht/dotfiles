@@ -3,4 +3,4 @@ if vim.fn.exists("syntax_on") then
 	vim.cmd("syntax reset") 
 end
 
-require('core.themes.highlight').setup()
+require('core.theme.highlight').setup()
