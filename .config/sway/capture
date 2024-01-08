@@ -1,0 +1,26 @@
+#!/bin/bash
+mode_arg(){
+  if [ -z "$1" ]; then
+    region=''
+  elif [ "$1" == 'region' ]; then
+    region='-g "$(slurp)"'
+  fi
+}
+
+if [ -z "$1" ]; then
+  echo 'No format supplied'
+  exit 1
+else
+  file=$(date +%d-%m-%y_%H:%M_)$(shuf -i 100000-999999 -n 1)
+  if [ "$1" == 'video' ]; then
+    mode_arg $2
+    cmd="wf-recorder ${region} -f ~/document/video/capture/${file}.mp4"
+    eval $cmd
+  elif [ "$1" == 'image' ]; then
+    mode_arg $2
+    cmd="grim ${region} ~/document/image/capture/${file}.png"
+    eval $cmd
+  elif [ "$1" == 'stop' ]; then
+    kill  -SIGINT $(pidof wf-recorder)
+  fi
+fi
