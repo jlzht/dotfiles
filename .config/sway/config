@@ -1,0 +1,145 @@
+# Workspaces name
+set {
+  $ws1 "1:" 
+  $ws2 "2:󰇧"
+  $ws3 "3:"
+  $ws4 "4:󰎄"
+}
+# Start-up applications
+exec {
+  dbus-run-session pipewire
+  dbus-run-session wireplumber
+  foot --server
+  mpd
+  yambar
+}
+
+for_window [app_id="mixer"] {
+  floating enable
+  border pixel 1
+  resize set width 60ppt height 50ppt
+}
+assign [app_id="foot"] workspace $ws1
+assign [app_id="luakit"] workspace $ws2
+assign [app_id="zathura"] workspace $ws3
+assign [app_id="mpd"] workspace $ws4
+# Keyboard layout
+input * {
+  xkb_layout "br"
+}
+# Window layout
+gaps vertical 5
+gaps horizontal 2
+gaps inner 5
+default_border pixel 1
+default_floating_border pixel 1
+# Set borders colors
+set {
+  $bgs #211C2E
+  $bgi #121020
+  $bgw #FF427C
+} 
+client.focused $bgs $bgs $bgs $bgs  
+client.unfocused $bgi $bgi $bgi $bgi
+client.urgent $bgw $bgw $bgw $bgw 
+# Key mapping
+set {
+  $mod Mod4
+  $left h
+  $down j
+  $up k
+  $right l
+}
+# Set background 
+output "*" bg #0E0B16 solid_color
+# Lockscreen decoration
+exec swayidle -w timeout 300 'swaylock' \
+  timeout 600 'swaymsg "output * power off"' \
+  resume 'swaymsg "output * power on"' \
+# Start a terminal
+bindsym $mod+Return exec footclient
+# Kill focused window
+bindsym $mod+Shift+q kill
+# Start browser
+bindsym $mod+o exec luakit -nU
+# Start PDF viewer
+bindsym $mod+p exec zathura
+# Start mixer
+bindsym $mod+s exec footclient -a mixer pulsemixer
+# Full selection key
+bindsym Shift+x exec swaymsg 'seat "seat0" cursor press button1' 
+floating_modifier $mod normal
+# Reload the configuration file
+bindsym $mod+Shift+c reload
+# Move your focus around
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+# Move the focused window with the same, but add Shift
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+# Switch to workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2 
+bindsym $mod+3 workspace $ws3 
+bindsym $mod+4 workspace $ws4 
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+# Horizontal and vertical splits
+bindsym $mod+b splith
+bindsym $mod+v splitv
+# Rotate workspace layout 
+bindsym $mod+e layout toggle split
+# Make the current focus fullscreen
+bindsym $mod+f fullscreen
+# Toggle the current focus between tiling and floating mode
+bindsym $mod+Shift+space floating toggle
+# Swap focus between the tiling area and the floating area
+bindsym $mod+space focus mode_toggle
+# Move focus to the parent container
+bindsym $mod+a focus parent
+# Resizing containers:
+mode "resize" {
+  bindsym $left resize shrink width 16px
+  bindsym $down resize grow height 16px
+  bindsym $up resize shrink height 16px
+  bindsym $right resize grow width 16px
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+# Capturing image or video
+mode "capture" {
+  bindsym v exec ~/.config/sway/capture video region, mode "default"
+  bindsym w exec ~/.config/sway/capture video, mode "default"
+  bindsym i exec ~/.config/sway/capture image region, mode "default"
+  bindsym l exec ~/.config/sway/capture image, mode "default"
+  bindsym k exec ~/.config/sway/capture stop, mode "default"
+  bindsym Escape mode "default"
+}
+mode "music" {
+  bindsym m exec footclient -a mpd mmtc
+  bindsym l exec mpc ls | mpc add
+  bindsym j exec mpc next
+  bindsym k exec mpc prev
+  bindsym r exec mpc random
+  bindsym c exec mpc consume
+  bindsym p exec mpc play
+  bindsym space exec mpc pause
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+mode "power" {
+  bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+bindsym $mod+Shift+g mode "capture"
+bindsym $mod+Shift+m mode "music"
+bindsym $mod+Shift+e mode "power"
+include /etc/sway/config.d/*
