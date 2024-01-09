@@ -1,0 +1,253 @@
+#!/usr/bin/env bash
+
+CONFIG_DIR="$HOME/.config/palette/config"
+
+# Palette used for default option
+default_colors=( 
+  "#221B36" "#FF427C" "#69FF47" "#FFE722" 
+  "#42AED5" "#C1FE00" "#10E080" "#F9F9F9"
+  "#0C0E15" "#B30039" "#44D62C" "#E69200"
+  "#1060AE" "#96C300" "#32ED4F" "#6C7D9C"
+  "#0E0B16" "#171322" "#211C2E" "#322C45"
+  "#120033" "#B3C4E0" "#455574" "#6E8EC3"
+)
+
+# Color codes used for substitutions
+codes=(
+  "BL0" "RD0" "GR0" "YW0" "BU0" "MG0" "CY0" "WH0"
+  "BL1" "RD1" "GR1" "YW1" "BU1" "MG1" "CY1" "WH1"
+  "FG0" "FG1" "FG2" "FG3" "BG0" "BG1" "BG2" "HG0"
+)
+
+# Configurations files the program looks up
+config_files=(
+  "nvim/lua/core/themes/palette.lua"
+  "sway/config"
+  "yambar/config.yml"
+  "foot/foot.ini"
+  "swaylock/config"
+  "imv/config"
+  "zathura/zathurarc"
+  "luakit/palette.lua"
+)
+
+# Checks if config file exists
+check_config () {
+  if ! [ "$#" -gt 0 ]; then
+    raise_error
+    exit 1
+  fi
+  for file in "${config_files[@]}"; do
+    if [ -e "$HOME/.config/$file" ]; then
+        continue
+    else
+        echo "Error: $HOME/.config/$file does not exist"
+        exit 1
+    fi
+  done
+
+  if ! [ -e "$CONFIG_DIR" ]; then
+    echo "Info: missing config file, creating palette dir"
+    mkdir -p "$HOME/.config/palette"
+    touch "$CONFIG_DIR"
+    create_palette "default"
+    set_palette "default"
+  fi
+}
+
+# Checks for valids palettes themes
+check_palette () {
+  local palettes=()
+  while IFS= read -r line; do
+    if [[ $line == @* ]]; then
+      palettes+=("$line")
+    fi
+  done < "$CONFIG_DIR"
+
+  echo "${palettes[@]}"
+}
+
+# Populates config file with new palette
+create_palette () {
+  local palettes=($(check_palette))
+  for palette in "${palettes[@]}"; do
+    if [ "$palette" == "@$1" ]||[ "$palette" == "@$1-" ]; then
+      echo "Error: cant create palette, name is already in use"
+      exit 1
+    fi
+  done
+  if ! [ -s "$CONFIG_DIR" ]; then
+    echo "@$1" >> "$CONFIG_DIR"
+  else
+    echo "" >> "$CONFIG_DIR"
+    echo "@$1" >> "$CONFIG_DIR"
+  fi
+  for color in "${default_colors[@]}"; do
+    echo -n $color >> "$CONFIG_DIR"
+  done
+}
+
+# Return the default palette
+get_palette () {
+  local palettes=($(check_palette))
+  if [ -z "${palettes[@]}" ]; then
+    echo ''
+  fi
+  for default in "${palettes[@]}"; do
+    if [[ $default == *@*- ]]; then
+      echo $default
+    fi
+  done
+}
+
+# Set desired palette $1 as default
+set_palette () {
+  if ! [ -n "$1" ]; then
+    echo "Error: no palette was supplied"
+    exit 1
+  fi
+  local c=
+  local d=
+  if [ "@$1" == "$(get_palette)" ]; then
+    echo "Error: selected palette is already default"
+    exit 1
+  fi
+  if [ "$(get_palette)" == "" ]; then
+    sed -i "s/$1/$1-/" $CONFIG_DIR
+    exit 0
+  fi
+  local palettes=($(check_palette))
+  for palette in "${palettes[@]}"; do
+    if [ "$palette" == "@$1" ]; then
+      c="$palette"
+    fi
+    if ! [ -n $c ]; then
+      echo "Error: \"$1\" palette doesn't seem to exist"
+      exit 1
+    fi
+  done
+  sed -i "s/$d/${d%?}/" $CONFIG_DIR
+  sed -i "s/$c/@$1-/" $CONFIG_DIR
+}
+
+# Changes hexcolor codes for palette codes
+revert_colors () {
+  for f in "${!config_files[@]}"; do
+    for ((i=0; i<${#colors[@]}; i++)); do
+      printf "%s" "s/${colors[i]}/${codes[$i]}/;"
+    done | { read -r var; sed -e ${var%?} -i $HOME/.config/${config_files[$f]};}
+  done
+}
+
+# Inverse of reverse_colors
+reapply_colors () {
+  for f in "${!config_files[@]}"; do
+    for ((i=0; i<${#colors[@]}; i++)); do
+      printf "%s" "s/${codes[i]}/${colors[$i]}/;"
+    done | { read -r var; sed -e ${var%?} -i $HOME/.config/${config_files[$f]};}
+  done
+}
+
+# Get colors from inserted palette
+get_colors () {
+  local line=$(grep -n "@$1" "$CONFIG_DIR" | cut -d: -f1)
+  local colors=($( sed -n "$((line + 1))p" "$CONFIG_DIR" | grep -oP '[0-9A-Fa-f]{6}'))
+  echo "${colors[@]}"
+}
+
+set_colors () {
+  if [ $((($#+1)%2)) -eq 0 ]; then
+    for ((i = 2; i <= $#; i += 2)); do
+      code="${!i}"
+      color="${@:i+1:1}"
+      echo "$arg1 $arg2"
+      local line=$(grep -n "@$1" "$CONFIG_DIR" | cut -d: -f1)
+      local colors=($(get_colors $1))
+      for i in "${!codes[@]}"; do
+        if [ "${codes[$i]}" == "$code" ]; then
+          if [ $color =~ "^([A-Fa-f0-9]{6})$" ]; then
+            sed -i "$((line + 1))s/${colors[$i]}/$color/" $CONFIG_DIR
+          else
+            echo "Error: invalid hexcode, skipping...\n"
+          fi
+        fi
+      done
+    done
+    revert_colors "$1"
+    reapply_colors "$1"
+  else
+    echo "Error: hexcode/colorcode not specified"
+    exit 1
+  fi
+}
+
+show_colors () {
+  colors=($(get_colors $1))
+  echo "Palette:$1"
+  for ((color=0; color<${#colors[@]}; color++)); do
+    i="${colors[$color]}"
+    rgb=$(printf ";%d;%d;%d\n" 0x${i:0:2} 0x${i:2:2} 0x${i:4:2})
+    str="\033[48;2${rgb}m${codes[$color]}\033[0m"
+    printf ''${str}
+    if [ $((($color + 1)%8)) -eq 0 ]; then
+      echo ''
+    fi
+  done
+}
+
+raise_error () {
+  if ! [ -n "$1" ]; then
+    echo "Error: no command was specified"
+  else
+    echo "Error: $1 is not a valid command"
+  fi
+  show_help
+}
+
+show_help () {
+  cat <<EOF
+  Usage: palette [command] [args]
+
+    commands:
+      help                                     : Show this message.
+      show    <palette>                        : Show palette colors.
+      new     <palette>                        : Create a new color palette.
+      set     <palette> <color-id> <hex-color> : Set a new color to a palette.
+      select  <palette>                        : set palette as default.
+      revert                                   : Transforms hexcodes to colorcodes.
+      apply                                    : Transforms colorcodes to hexcodes.
+  
+EOF
+}
+
+palette () {
+  check_config "$@"
+  case $1 in
+  'help')
+    show_help	
+  ;;
+  'show')
+    show_colors $2
+  ;;
+  'new')
+    create_palette $2
+  ;;
+  'revert')
+    revert_colors "$2"
+  ;;
+  'apply')
+    apply_colors "$2"
+  ;;
+  'set')
+    set_colors "$@"
+  ;;
+  'select')
+    set_palette $2
+  ;;
+  *)
+    raise_error $1
+  ;;
+  esac
+}
+
+palette "$@"
