@@ -1,6 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-CONFIG_DIR="$HOME/.config/palette/config"
+CONFIG_DIR="$HOME/.config/palette"
+CONFIG_FILE="$CONFIG_DIR/config"
 
 # Palette used for default option
 default_colors=( 
@@ -21,7 +22,7 @@ codes=(
 
 # Configurations files the program looks up
 config_files=(
-  "nvim/lua/core/themes/palette.lua"
+  "nvim/lua/core/theme/palette.lua"
   "sway/config"
   "yambar/config.yml"
   "foot/foot.ini"
@@ -38,143 +39,158 @@ check_config () {
     exit 1
   fi
   for file in "${config_files[@]}"; do
-    if [ -e "$HOME/.config/$file" ]; then
-        continue
-    else
-        echo "Error: $HOME/.config/$file does not exist"
-        exit 1
+    if ! [ -e "$HOME/.config/$file" ]; then
+      echo "Error: $HOME/.config/$file does not exist"
+      exit 1
     fi
   done
-
-  if ! [ -e "$CONFIG_DIR" ]; then
-    echo "Info: missing config file, creating palette dir"
-    mkdir -p "$HOME/.config/palette"
-    touch "$CONFIG_DIR"
-    create_palette "default"
-    set_palette "default"
+  if ! [ -e "$CONFIG_FILE" ]; then
+    echo "Error: default config file does not exist, creating..."
+    mkdir -p "$CONFIG_DIR" && touch "$CONFIG_FILE"
+    create_palette "Default"
+    set_default_palette "Default"
   fi
 }
 
-# Checks for valids palettes themes
 check_palette () {
-  local palettes=()
-  while IFS= read -r line; do
-    if [[ $line == @* ]]; then
-      palettes+=("$line")
+  local palettes=($(get_palette))
+  for palette in "${palettes[@]}"; do
+    if [ "$palette" == "$1-" ]; then
+      echo ${palette%?}
+      return
     fi
-  done < "$CONFIG_DIR"
+    if [ "$palette" == "$1" ]; then
+      echo ${palette}
+      return
+    fi
+  done
+  echo ''
+}
 
-  echo "${palettes[@]}"
+check_input () {
+   if [ -z "$1" ]; then
+      echo "Error: no palette was supplied"
+      exit 1
+  fi
+  if [ -z "$(check_palette $1)" ]; then
+    echo "Error: '$1' palette doesn't seem to exist"
+    exit 1
+  fi
 }
 
 # Populates config file with new palette
 create_palette () {
-  local palettes=($(check_palette))
-  for palette in "${palettes[@]}"; do
-    if [ "$palette" == "@$1" ]||[ "$palette" == "@$1-" ]; then
+  if [ -n "$(check_palette $1)" ]; then
       echo "Error: cant create palette, name is already in use"
       exit 1
-    fi
-  done
-  if ! [ -s "$CONFIG_DIR" ]; then
-    echo "@$1" >> "$CONFIG_DIR"
+  fi
+  if ! [ -s "$CONFIG_FILE" ]; then
+    echo "@$1" >> "$CONFIG_FILE"
   else
-    echo "" >> "$CONFIG_DIR"
-    echo "@$1" >> "$CONFIG_DIR"
+    echo "" >> "$CONFIG_FILE"
+    echo "@$1" >> "$CONFIG_FILE"
   fi
+
   for color in "${default_colors[@]}"; do
-    echo -n $color >> "$CONFIG_DIR"
+    echo -n $color >> "$CONFIG_FILE"
   done
 }
 
-# Return the default palette
+# Return palettes
 get_palette () {
-  local palettes=($(check_palette))
-  if [ -z "${palettes[@]}" ]; then
-    echo ''
-  fi
-  for default in "${palettes[@]}"; do
-    if [[ $default == *@*- ]]; then
-      echo $default
+  local palettes=()
+  while IFS= read -r line; do
+    if [[ $line == @* ]]; then
+      palettes+=("${line:1}")
+    fi
+  done < "$CONFIG_FILE"
+  echo "${palettes[@]}"
+}
+
+get_default_palette () {
+  local palettes=($(get_palette))
+  for palette in "${palettes[@]}"; do
+    if [[ $palette == *- ]]; then
+      echo ${palette%?}
     fi
   done
+  echo ''
 }
 
-# Set desired palette $1 as default
-set_palette () {
-  if ! [ -n "$1" ]; then
-    echo "Error: no palette was supplied"
-    exit 1
+set_default_palette () {
+  local default=$(get_default_palette)
+  if [ -z "$default" ]; then
+    sed -i "s/@$1/@$1-/" $CONFIG_FILE
+    exit 0
   fi
-  local c=
-  local d=
-  if [ "@$1" == "$(get_palette)" ]; then
+  check_input "$@"
+  if [ $default == "$1" ]; then
     echo "Error: selected palette is already default"
     exit 1
   fi
-  if [ "$(get_palette)" == "" ]; then
-    sed -i "s/$1/$1-/" $CONFIG_DIR
-    exit 0
-  fi
-  local palettes=($(check_palette))
-  for palette in "${palettes[@]}"; do
-    if [ "$palette" == "@$1" ]; then
-      c="$palette"
-    fi
-    if ! [ -n $c ]; then
-      echo "Error: \"$1\" palette doesn't seem to exist"
-      exit 1
-    fi
-  done
-  sed -i "s/$d/${d%?}/" $CONFIG_DIR
-  sed -i "s/$c/@$1-/" $CONFIG_DIR
+  sed -i "s/@$default-/@$default/" $CONFIG_FILE
+  sed -i "s/@$1/@$1-/" $CONFIG_FILE
 }
 
 # Changes hexcolor codes for palette codes
 revert_colors () {
+  local default=$(get_default_palette)
+  if [ -z $default ]; then
+    echo "Error: no default palette found, run: palette init"
+    exit 1
+  fi
+  colors=($(get_colors $default))
   for f in "${!config_files[@]}"; do
-    for ((i=0; i<${#colors[@]}; i++)); do
-      printf "%s" "s/${colors[i]}/${codes[$i]}/;"
+    for ((i=1; i<${#colors[@]}; i++)); do
+      printf "%s" "s/${colors[$i]}/${codes[$((i - 1))]}/;"
     done | { read -r var; sed -e ${var%?} -i $HOME/.config/${config_files[$f]};}
   done
 }
 
 # Inverse of reverse_colors
-reapply_colors () {
+apply_colors () {
+  local default=$(get_default_palette)
+  if [ -z $default ]; then
+    echo "Error: no default palette found, run: palette init"
+    exit 1
+  fi
+  colors=($(get_colors $default))
   for f in "${!config_files[@]}"; do
-    for ((i=0; i<${#colors[@]}; i++)); do
-      printf "%s" "s/${codes[i]}/${colors[$i]}/;"
+    for ((i=1; i<${#colors[@]}; i++)); do
+      printf "%s" "s/${codes[$((i - 1))]}/${colors[$i]}/;"
     done | { read -r var; sed -e ${var%?} -i $HOME/.config/${config_files[$f]};}
   done
 }
 
 # Get colors from inserted palette
 get_colors () {
-  local line=$(grep -n "@$1" "$CONFIG_DIR" | cut -d: -f1)
-  local colors=($( sed -n "$((line + 1))p" "$CONFIG_DIR" | grep -oP '[0-9A-Fa-f]{6}'))
-  echo "${colors[@]}"
+  local line=$(grep -n "@$1" "$CONFIG_FILE" | cut -d: -f1)
+  local colors=($( sed -n "$((line + 1))p" "$CONFIG_FILE" | grep -oP '[0-9A-Fa-f]{6}'))
+  echo -n "$line " && echo "${colors[@]}"
 }
 
 set_colors () {
-  if [ $((($#+1)%2)) -eq 0 ]; then
-    for ((i = 2; i <= $#; i += 2)); do
-      code="${!i}"
-      color="${@:i+1:1}"
-      echo "$arg1 $arg2"
-      local line=$(grep -n "@$1" "$CONFIG_DIR" | cut -d: -f1)
-      local colors=($(get_colors $1))
-      for i in "${!codes[@]}"; do
-        if [ "${codes[$i]}" == "$code" ]; then
-          if [ $color =~ "^([A-Fa-f0-9]{6})$" ]; then
-            sed -i "$((line + 1))s/${colors[$i]}/$color/" $CONFIG_DIR
+  check_input "$2"
+  local palette=($(get_colors $2))
+  local line="${palette[0]}"
+  if [ $((($#)%2)) -eq 0 ]; then
+    for ((i = 3; i <= $#; i += 2)); do
+      local code="${!i}"
+      local color="${@:i+1:1}"
+      for ((j = 0; j < (${#palette[@]} - 1); j++)); do
+        if [ "${codes[$j]}" == "$code" ]; then
+          if [[ $color =~ ^[0-9A-Fa-f]{6}$ ]]; then
+            sed -i "$((line + 1))s/${palette[$((j + 1))]}/$color/" $CONFIG_FILE
           else
-            echo "Error: invalid hexcode, skipping...\n"
+            echo "Error: invalid hexcode, skipping..."
           fi
         fi
       done
     done
-    revert_colors "$1"
-    reapply_colors "$1"
+    if [ "$2" = $(get_default_palette) ]; then
+      revert_colors
+      apply_colors
+    fi
   else
     echo "Error: hexcode/colorcode not specified"
     exit 1
@@ -182,14 +198,15 @@ set_colors () {
 }
 
 show_colors () {
+  check_input "$@"
   colors=($(get_colors $1))
   echo "Palette:$1"
-  for ((color=0; color<${#colors[@]}; color++)); do
+  for ((color=1; color<${#colors[@]}; color++)); do
     i="${colors[$color]}"
     rgb=$(printf ";%d;%d;%d\n" 0x${i:0:2} 0x${i:2:2} 0x${i:4:2})
-    str="\033[48;2${rgb}m${codes[$color]}\033[0m"
+    str="\033[48;2${rgb}m${codes[$((color - 1))]}\033[0m"
     printf ''${str}
-    if [ $((($color + 1)%8)) -eq 0 ]; then
+    if [ $((($color)%8)) -eq 0 ]; then
       echo ''
     fi
   done
@@ -227,25 +244,25 @@ palette () {
     show_help	
   ;;
   'show')
-    show_colors $2
+    show_colors "$2"
   ;;
   'new')
-    create_palette $2
+    create_palette "$2"
   ;;
   'revert')
-    revert_colors "$2"
+    revert_colors
   ;;
   'apply')
-    apply_colors "$2"
+    apply_colors
   ;;
   'set')
     set_colors "$@"
   ;;
   'select')
-    set_palette $2
+    set_default_palette "$2"
   ;;
   *)
-    raise_error $1
+    raise_error "$1"
   ;;
   esac
 }
