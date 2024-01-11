@@ -1,5 +1,5 @@
-
 return {
+  -- SOLVE: share this neovim config file with luakit browser
   bl0 = "#211C2E",
   rd0 = "#FF427C",
   gr0 = "#69FF47",
@@ -20,8 +20,8 @@ return {
   bg1 = "#121020",
   bg2 = "#301B3C",
   bg3 = "#322C45",
+  hfg = "#1F1B3C",
   fg0 = "#6C7D9C",
   fg1 = "#455574",
   fg2 = "#6E8EC3",
-  hfg = "#1F1B3C"
 }

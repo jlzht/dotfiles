@@ -1,6 +1,7 @@
--- Editor config
-require("core.options")
-require("core.keymaps")
-require("core.theme")
--- Plugin config
-require("plugins.packer")
+require('core.options')
+require('core.keymaps')
+require('core.theme')
+require('plugins.packer')
+require('plugins.completion')
+require('plugins.lspconfig')
+require('plugins.treesitter')
