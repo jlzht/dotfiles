@@ -1,0 +1,243 @@
+text: &text Source Code Pro:size=13
+icon: &icon Overpass Nerd Font:style=Solid:size=15
+icon_bigger: &icon_bigger Overpass Nerd Font:style=Solid:size=16
+icon_smaller: &icon_smaller Overpass Nerd Font:style=Solid:size=14
+
+active_line: &active_line
+  margin: 3
+  foreground: F9F9F9FF
+  deco: {underline: { size: 1, color: F9F9F9FF}}
+inactive_line: &inactive_line
+  margin: 3
+  foreground: B3C4E0FF
+  deco: {underline: { size: 1, color: B3C4E0FF}}
+red_line: &red_line
+  margin: 3
+  foreground: FF247CFF
+  deco: {underline: { size: 1, color: FF427CFF}}
+
+bar:
+  height: 25 
+  location: top
+  spacing: 6
+  margin: 5
+  font: *text 
+  foreground: B3C4E0FF
+  background: 171322FF
+  border:
+    top-width: 1
+    bottom-width: 1
+    left-width: 1
+    right-width: 1
+    color: 211C2EFF
+  left:
+    - i3:
+        sort: ascending
+        strip-workspace-numbers: true
+        anchors:
+          - string: &default {text: "{name}", font: *icon}
+        content:
+          "":
+            map:
+              conditions:
+                state == focused:
+                  - string: {text: , margin: 2}
+                  - string: {<<: [*default, *active_line]}
+                  - string: {text: '󰤃', margin: 2}
+                state == unfocused:
+                  - string: {text: , margin: 2}
+                  - string: {<<: [*default, *inactive_line]}
+                  - string: {text: '󰤃', margin: 2}
+                state == invisible: 
+                  - string: {text: , margin: 2}
+                  - string: {<<: *default}
+                  - string: {text: '󰤃', margin: 2}
+          current:
+            map:
+              conditions:
+                mode == "default":
+                  - {empty: {}}
+                mode == "resize":
+                  - string: {text: , margin: 5}
+                  - string: {<<: *inactive_line, text: 󰩨 }
+                mode == "capture":
+                  - string: {text: , margin: 5}
+                  - string: {<<: *inactive_line, text: 󰻃 , font: *icon}
+                mode == "music":
+                  - string: {text: , margin: 5}
+                  - string: {<<: *inactive_line, text: 󰗅 , font: *icon}
+                mode == "power":
+                  - string: {text: , margin: 5}
+                  - string: {<<: *red_line, text: 󰗼 , font: *icon, on-click: "swaymsg exit"}
+                  - string: {text: , margin: 5}
+                  - string: {<<: *red_line, text:  , font: *icon, on-click: "loginctl reboot"}
+                  - string: {text: , margin: 5}
+                  - string: {<<: *red_line, text:  , font: *icon, on-click: "loginctl poweroff"}
+    - mpd:
+        host: localhost
+        port: 6600
+        content:
+          list:
+            spacing: 0
+            items:
+              - string: {<<: *inactive_line, text: "{title} {pos}/{end}", left-margin: 5, max: 60}
+              - string: {<<: *inactive_line, text: 󰝚 ,font: *icon}
+  right:
+    - pipewire:
+        anchors:
+          volume: &volume
+              conditions:
+                muted:
+                  - string: {text: "{cubic_volume}%", margin: 5}
+                ~muted: 
+                  - string: {text: "{cubic_volume}%", margin: 5}
+        content:
+          list:
+            spacing: 5
+            items:
+              - map:
+                  on-click: "foot -a mixer pulsemixer"
+                  conditions:
+                    type == "sink":
+                      map:
+                        conditions:
+                          muted:
+                            - string: {<<: *inactive_line, text: 󰝟 ,font: *icon}
+                          ~muted: 
+                            list:
+                              spacing: 0
+                              items:
+                                - string: {<<: *inactive_line, text: "{cubic_volume}%"}
+                                - ramp:
+                                    tag: cubic_volume
+                                    items:
+                                      - string: {<<: *inactive_line, text:  ,font: *icon}
+                                      - string: {<<: *inactive_line, text:  ,font: *icon}
+                                      - string: {<<: *inactive_line, text: 󰕾 ,font: *icon}
+                                      - string: {<<: *inactive_line, text:  ,font: *icon}
+                    type == "source":
+                      map:
+                        conditions:
+                          muted:
+                            - string: {text: , margin: 5}
+                            - string: {<<: *inactive_line, text:  ,font: *icon}
+                          ~muted:
+                            list:
+                              spacing: 0
+                              items:
+                                - string: {text: , margin: 5}
+                                - string: {<<: *inactive_line, text: "{cubic_volume}%"}
+                                - string: {<<: *inactive_line, text:  ,font: *icon}
+                            
+    - network:
+        name: wlp1s0
+        poll-interval: 1000
+        content:
+          map:
+            default:
+              - string: {text: 󰤮 , font: *icon}
+            conditions:
+              state == down:
+                - string: {text: 󰤫 , font: *icon}
+              state == up:
+                list:
+                  spacing: 0
+                  items:
+                    - string: {<<: *inactive_line, text: "{ssid}"}
+                    - ramp:
+                        tag: signal
+                        min: -90
+                        max: -30
+                        items:
+                          - string: {<<: *inactive_line, text: 󰤯 , font: *icon}
+                          - string: {<<: *inactive_line, text: 󰤟 , font: *icon}
+                          - string: {<<: *inactive_line, text: 󰤢 , font: *icon}
+                          - string: {<<: *inactive_line, text: 󰤥 , font: *icon}
+                          - string: {<<: *inactive_line, text: 󰤨 , font: *icon}
+    - cpu:
+        content:
+          map:
+            conditions:
+              id < 0:
+                list:
+                  spacing: 0
+                  items:
+                    - string: {<<: *inactive_line, text: "{cpu}%"}
+                    - string: {<<: *inactive_line, text:  , font: *icon_smaller}
+    - mem:
+        content:
+          list:
+            spacing: 0
+            items:
+              - string: {<<: *inactive_line, text: "{used:mb}MB"}
+              - string: {<<: *inactive_line, text:  ,font: *icon}
+    - backlight:
+        name: amdgpu_bl0
+        content:
+          list:
+            spacing: 0
+            items:
+              - string: {<<: *inactive_line, text: "{percent}%", margin: 3}
+              - ramp:
+                  tag: brightness
+                  items:
+                    - string: {<<: *inactive_line, text: 󱩏 , font: *icon}
+                    - string: {<<: *inactive_line, text: 󱩐 , font: *icon}
+                    - string: {<<: *inactive_line, text: 󱩓 , font: *icon}
+                    - string: {<<: *inactive_line, text: 󱩔 , font: *icon}
+                    - string: {<<: *inactive_line, text: 󱩕 , font: *icon}
+                    - string: {<<: *inactive_line, text: 󱩖 , font: *icon}
+                    - string: {<<: *inactive_line, text: 󰛨 , font: *icon}
+    - battery:
+        name: BAT0
+        poll-interval: 500
+        anchors:
+          discharging: &discharging
+            list:
+              spacing: 0
+              items:
+                - string: {<<: *inactive_line, text: "{capacity}%"}
+                - ramp:
+                    tag: capacity
+                    items:
+                      - string: {<<: *inactive_line, text: 󰁺, font: *icon_bigger}
+                      - string: {<<: *inactive_line, text: 󰁻, font: *icon_bigger} 
+                      - string: {<<: *inactive_line, text: 󰁼, font: *icon_bigger} 
+                      - string: {<<: *inactive_line, text: 󰁽, font: *icon_bigger} 
+                      - string: {<<: *inactive_line, text: 󰁾, font: *icon_bigger} 
+                      - string: {<<: *inactive_line, text: 󰁿, font: *icon_bigger} 
+                      - string: {<<: *inactive_line, text: 󰂀, font: *icon_bigger} 
+                      - string: {<<: *inactive_line, text: 󰂁, font: *icon_bigger} 
+                      - string: {<<: *inactive_line, text: 󰁹, font: *icon_bigger} 
+        content:
+          map:
+            conditions:
+              state == unknown:
+                <<: *discharging
+              state == discharging:
+                <<: *discharging
+              state == charging:
+                list:
+                  spacing: 0
+                  items:
+                    - string: {<<: *inactive_line, text: "{capacity}%"}
+                    - string: {<<: *inactive_line, text: 󰂄, font: *icon_bigger}
+              state == full:
+                list:
+                  spacing: 0
+                  items:
+                    - string: {<<: *inactive_line, text: "{capacity}%"}
+                    - string: {<<: *inactive_line, text: 󱟢, font: *icon_bigger} 
+              state == "not charging":
+                <<: *discharging
+    - clock:
+        time-format: "%H:%M"
+        content:
+          list:
+            spacing: 0
+            items:
+              - string: {<<: *inactive_line, text: "{time}"}
+              - string: {<<: *inactive_line, text:  , font: *icon}
+              - string: {text: , margin: 6}
+              - string: {<<: *inactive_line, text: "{date}"}
+              - string: {<<: *inactive_line, text:  , font: *icon}
