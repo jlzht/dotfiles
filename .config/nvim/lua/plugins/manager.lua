@@ -31,6 +31,15 @@ return require("packer").startup(function(use)
     -- Snippets
     'rafamadriz/friendly-snippets'
   }
-  -- UI
+  use {
+    -- UI
+    {
+      'akinsho/bufferline.nvim',
+      tag = "*",
+      requires = 'nvim-tree/nvim-web-devicons'
+    },
+    'nvim-lualine/lualine.nvim',
+    'nvim-tree/nvim-tree.lua'
+  }
   -- Document
 end)
