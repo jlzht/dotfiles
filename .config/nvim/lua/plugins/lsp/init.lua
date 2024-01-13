@@ -39,7 +39,7 @@ for _, server in pairs(servers) do
     capabilities = capabilities,
   }
   server = vim.split(server, "@")[1]
-  local success, sv_conf = pcall(require, "plugins.sv" .. server)
+  local success, sv_conf = pcall(require, "plugins.lsp.servers" .. server)
   if success then
     opts = vim.tbl_deep_extend("force", sv_conf, opts)
   end

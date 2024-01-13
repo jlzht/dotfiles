@@ -1,4 +1,4 @@
-local c = require('core.theme.palette')
+local c = require('core.colorscheme.palette')
 
 local M = {}
 local hl = {langs = {}, plugins = {}}

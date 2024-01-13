@@ -1,5 +1,5 @@
 local cmp = require("cmp")
-local luasnip = pcall(require,"luasnip")
+local luasnip = require("luasnip")
 
 require('luasnip.loaders.from_vscode').lazy_load()
 

@@ -1,7 +1,9 @@
+-- Builtin features
+require('core.colorscheme')
 require('core.options')
 require('core.keymaps')
-require('core.theme')
-require('plugins.packer')
-require('plugins.completion')
-require('plugins.lspconfig')
-require('plugins.treesitter')
+-- Plugins features
+require('plugins.manager')
+require('plugins.syntax')
+require('plugins.cmp')
+require('plugins.lsp')
