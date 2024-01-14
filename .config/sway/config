@@ -58,8 +58,8 @@ exec swayidle -w timeout 300 'swaylock' \
   timeout 600 'swaymsg "output * power off"' \
   resume 'swaymsg "output * power on"' \
 
-# Start a terminal
-bindsym $mod+Return exec footclient
+# Start a tmux session
+bindsym $mod+Return exec ~/.config/sway/session
 
 # Kill focused window
 bindsym $mod+Shift+q kill

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Script used to start tmux session.
+
+if tmux has-session -t MAIN 2>/dev/null; then
+  if pgrep -x "footclient" > /dev/null; then
+    continue
+  else
+    footclient tmux attach
+  fi
+else
+  footclient tmux new -s MAIN
+fi
