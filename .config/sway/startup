@@ -1,0 +1,25 @@
+#!/bin/bash env
+
+# Check if start-up apps are running, if not, starts then with required arguments.
+# This script was created only to prevent breaks in Sway sessions when reloading/re-entering.
+
+apps=(
+    "pipewire"
+    "wireplumber"
+    "foot"
+    "mpd"
+    )
+args=(
+    "dbus-run-session pipewire"
+    "dbus-run-session wireplumber"
+    "foot --server"
+    "mpd"
+    )
+
+for i in "${!apps[@]}"; do
+    if pgrep -x "${apps[i]}" > /dev/null; then
+      continue
+    else
+      sh -c "${args[i]} &"
+    fi
+done
