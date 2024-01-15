@@ -36,11 +36,19 @@ return require("packer").startup(function(use)
     -- UI
     {
       'akinsho/bufferline.nvim',
-      tag = "*",
+      tag = '*',
       requires = 'nvim-tree/nvim-web-devicons'
     },
+    'lukas-reineke/indent-blankline.nvim',
     'nvim-lualine/lualine.nvim',
-    'nvim-tree/nvim-tree.lua'
+  }
+  use {
+    -- Utils
+    'akinsho/toggleterm.nvim',
+    {
+      'nvim-telescope/telescope.nvim',
+      requires = 'nvim-lua/plenary.nvim'
+    }
   }
   -- Document
 end)

@@ -54,8 +54,8 @@ require("lualine").setup{
  },
  sections = {
   lualine_a = {'mode'},
-  lualine_b = {'branch', 'diff', 'diagnostics'},
-  lualine_c = {'filename'},
+  lualine_b = {'filename','branch', 'diff', 'diagnostics','filenamee'},
+  lualine_c = {},
   lualine_x = {'encoding','filetype'},
   lualine_y = {'progress'},
   lualine_z = {'location'}
@@ -84,33 +84,10 @@ require("bufferline").setup {
     persist_buffer_sort = true, 
     enforce_regular_tabs = true, 
     always_show_bufferline = true, 
-    hover = { enabled = false },
-    offsets = {
-      { 
-      	separator = true,
-	      filetype = "NvimTree",
-        highlight = "NvimTreeNormal"
-      }
-    }
+    hover = { enabled = false }
   };
   highlights = highlights;
 }
-
-require("nvim-tree").setup({
-  disable_netrw = false,
-  hijack_cursor = false,
-  sort_by = "case_sensitive",
-  view = {
-    cursorline = false;
-    width = 24,
-  },
-  renderer = {
-    group_empty = true,
-  },
-  filters = {
-    dotfiles = true,
-  },
-})
 
 local hooks = require("ibl.hooks")
 
@@ -119,3 +96,4 @@ hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
 end)
 
 require("ibl").setup {indent = {highlight = highlight }}
+vim.api.nvim_set_hl(0, "TelescopeBorder", {fg = c.bl0})
