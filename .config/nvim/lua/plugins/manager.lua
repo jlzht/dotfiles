@@ -50,5 +50,14 @@ return require("packer").startup(function(use)
       requires = 'nvim-lua/plenary.nvim'
     }
   }
-  -- Document
+  use {
+    -- Notes
+    {
+      'iamcco/markdown-preview.nvim',
+      run = function()
+        vim.fn["mkdp#util#install"]()
+      end
+    },
+    'renerocksai/telekasten.nvim'
+  }
 end)
