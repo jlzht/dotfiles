@@ -9,6 +9,7 @@ apps=(
     "foot"
     "mpd"
     )
+
 args=(
     "dbus-run-session pipewire"
     "dbus-run-session wireplumber"

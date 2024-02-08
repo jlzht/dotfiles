@@ -7,31 +7,31 @@ set {
 }
 
 # Startup applications
-exec sh .config/sway/startup
-exec_always sh -c "pkill yambar; yambar &"
+exec bash .config/sway/startup
+exec_always bash -c "pkill yambar; yambar &"
 
 # Keyboard layout
-input * {
-  xkb_layout "br"
+input "type:keyboard" {
+  xkb_layout "br(thinkpad)"
+  xkb_model abnt2
 }
 
 # Window layout
 for_window [app_id="mixer"] {
   floating enable
-  border pixel 1
-  resize set width 60ppt height 50ppt
+  resize set 800 600
 }
+
 assign [app_id="foot"] workspace $ws1
 assign [app_id="luakit"] workspace $ws2
 assign [app_id="zathura"] workspace $ws3
 assign [app_id="mpd"] workspace $ws4
 
-gaps horizontal 6
-gaps vertical 5
+gaps vertical 9
+gaps horizontal 13
 gaps inner 5
-gaps top 7
-default_border pixel 1
-default_floating_border pixel 1
+
+for_window [app_id=".*"]  border pixel 2
 
 # Set borders colors
 set {
@@ -51,8 +51,10 @@ set {
   $up k
   $right l
 }
-# Set background 
-output "*" bg #0E0B16 solid_color
+
+# Default Wallpaper
+output * bg #0E0B16 solid_color
+
 # Lockscreen decoration
 exec swayidle -w timeout 300 'swaylock' \
   timeout 600 'swaymsg "output * power off"' \
@@ -144,15 +146,13 @@ mode "capture" {
 }
 
 # Control MPD instance
+
 mode "music" {
-  bindsym m exec footclient -a mpd mmtc
-  bindsym l exec mpc ls | mpc add
-  bindsym j exec mpc next
-  bindsym k exec mpc prev
-  bindsym r exec mpc random
-  bindsym c exec mpc consume
-  bindsym p exec mpc play
-  bindsym space exec mpc pause
+  bindsym m exec swaymsg workspace $ws4 && exec footclient -a mpd mmtc
+  bindsym a exec mmtc -C  "searchadd \\"(file != \\'\\')\\""
+  bindsym j exec mmtc -C previous
+  bindsym k exec mmtc -C next
+  bindsym space exec mmtc -C pause
   bindsym Return mode "default"
   bindsym Escape mode "default"
 }
