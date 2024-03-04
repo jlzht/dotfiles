@@ -17,12 +17,13 @@ default_colors=(
 codes=(
   "BL0" "RD0" "GR0" "YW0" "BU0" "MG0" "CY0" "WH0"
   "BL1" "RD1" "GR1" "YW1" "BU1" "MG1" "CY1" "WH1"
-  "FG0" "FG1" "FG2" "FG3" "BG0" "BG1" "BG2" "HG0"
+  "BG0" "BG1" "BG2" "BG3" "FG0" "FG1" "FG2" "HG0"
 )
 
 # Configurations files the program looks up
 config_files=(
-  "nvim/lua/core/theme/palette.lua"
+  "nvim/lua/plugins/notes/markdown.css"
+  "nvim/lua/core/colorscheme/palette.lua"
   "sway/config"
   "yambar/config.yml"
   "foot/foot.ini"
