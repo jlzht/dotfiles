@@ -27,9 +27,8 @@ assign [app_id="luakit"] workspace $ws2
 assign [app_id="zathura"] workspace $ws3
 assign [app_id="mpd"] workspace $ws4
 
-gaps vertical 9
-gaps horizontal 13
-gaps inner 5
+gaps outer 10
+gaps inner 8
 
 for_window [app_id=".*"]  border pixel 2
 

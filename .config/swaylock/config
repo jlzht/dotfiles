@@ -2,10 +2,10 @@ ignore-empty-password
 
 color=0E0B16
 
-indicator-radius=24
-indicator-thickness=8
-indicator-x-position=48
-indicator-y-position=720
+indicator-radius=36
+indicator-thickness=12
+indicator-x-position=64
+indicator-y-position=1016
 
 key-hl-color=32ED4F
 bs-hl-color=6C7D9C

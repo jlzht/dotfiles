@@ -68,16 +68,16 @@ Config (
             ])),
             ),
           )),
-          Fixed(9,
+          Fixed(10,
             TextboxC(Styled([Bg(DarkGray)],
               Parts([
                 If(TitleExist,
                   Parts([
-                    Text(" "),
-                    If(Repeat, Text(" 󰑖 "), Text(" ")),
-                    If(Random, Text(" 󰇎 "), Text("  ")),
-                    If(Single, Text(" 󰑘 "), Text("  ")),
-                    If(Consume, Text(" 󰐓 "), Text("  ")),
+                    Text("  "),
+                    If(Repeat, Text("󰑖"), Text(" ")),
+                    If(Random, Text(" 󰇎"), Text("  ")),
+                    If(Single, Text(" 󰑘"), Text("  ")),
+                    If(Consume, Text(" 󰐓"), Text("  ")),
                     Text(" "),
                   ]), Text("      ")
                 ),
