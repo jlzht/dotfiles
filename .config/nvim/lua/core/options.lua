@@ -22,6 +22,7 @@ vim.opt.encoding = "utf-8"
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
+vim.opt.pumheight = 20
 
 vim.cmd[[filetype plugin indent on]]
 vim.cmd[[hi Normal guibg=NONE ctermbg=NONE]]

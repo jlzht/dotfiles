@@ -1,5 +1,5 @@
 require("toggleterm").setup{
-  size = 12,
+  size = 16,
   open_mapping = [[<c-\>]],
   hide_numbers = true,
   shade_filetypes = {},
@@ -30,22 +30,21 @@ vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
 
 require('telescope.pickers.layout_strategies').bottom = function(picker, max_columns, max_lines, layout_config)
 	local layout = require('telescope.pickers.layout_strategies').bottom_pane(picker, max_columns, max_lines, layout_config)
-    layout.prompt.borderchars = {'─', ' ', ' ', ' ', '─', '─', ' ', ' '}
-    layout.preview.borderchars = {'─', ' ', ' ', '│', '┌', '─', ' ', '│'}
-    layout.results.border = false
+    layout.results.borderchars = {'', '', '', '', '', '', '', ''}
+    layout.prompt.title = ''
+    layout.prompt.borderchars = {'─', '', '', '', '─', '─', '', ''}
     layout.results.title = ''
-    layout.preview.title = ''
-    layout.prompt.title = '' 
 	return layout
 end
 
-require('telescope').setup{
+require('telescope').setup {
   defaults = {
-    border = true,
+    preview = false,
     layout_strategy = "bottom",
     layout_config = {
       bottom_pane = {
-        height = 12,
+        height = 17,
+        prompt_position = "top"
       }
     },
     mappings = {
