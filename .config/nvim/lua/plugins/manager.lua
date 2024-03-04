@@ -1,4 +1,18 @@
-vim.cmd [[packadd packer.nvim]]
+local fn = vim.fn
+
+local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
+if fn.empty(fn.glob(install_path)) > 0 then
+	PACKER_BOOTSTRAP = fn.system({
+		"git",
+		"clone",
+		"--depth",
+		"1",
+		"https://github.com/wbthomason/packer.nvim",
+		install_path,
+	})
+	vim.cmd([[packadd packer.nvim]])
+  vim.cmd([[:q]])
+end
 
 return require("packer").startup(function(use)
   use 'wbthomason/packer.nvim'
@@ -21,8 +35,7 @@ return require("packer").startup(function(use)
     'hrsh7th/nvim-cmp',
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-buffer',
-    'hrsh7th/cmp-buffer',
-    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-cmdline',
     'hrsh7th/cmp-nvim-lua',
     'saadparwaiz1/cmp_luasnip'
   }
@@ -49,6 +62,14 @@ return require("packer").startup(function(use)
       'nvim-telescope/telescope.nvim',
       requires = 'nvim-lua/plenary.nvim'
     }
+  }
+  use {
+    -- Linting
+    'mfussenegger/nvim-lint'
+  }
+  use {
+    -- Formatting
+    'mhartington/formatter.nvim'
   }
   use {
     -- Notes
