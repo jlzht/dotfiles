@@ -1,0 +1,153 @@
+.bookmark {
+    line-height: 1.6em;
+    margin: 0.4em 0;
+    padding: 0;
+    left: 0;
+    right: 0;
+}
+
+.bookmark:first-child { margin-top: 1em; }
+.bookmark:last-child { margin-bottom: 1em; }
+
+.bookmark .title, .bookmark .uri {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bookmark .top { position: relative; }
+
+.bookmark .title a {
+    font-weight: normal;
+    text-decoration: none;
+}
+
+.bookmark .title a:hover { text-decoration: underline; }
+
+.bookmark .uri, .bookmark .desc { display: none; }
+
+.bookmark .uri { color: #aaa; }
+
+.bookmark .bottom { white-space: nowrap; }
+
+.bookmark .bottom a {
+    text-decoration: none;
+    -webkit-user-select: none;
+    cursor: default;
+}
+
+.bookmark .bottom a:hover { cursor: pointer; }
+
+.bookmark .tags a {
+    color: #666;
+    background-color: #f6f6f6;
+    padding: 0.1em 0.4em;
+    margin: 0 0.3em;
+    -webkit-border-radius: 0.2em;
+    -webkit-box-shadow: 0 0.1em 0.1em #666;
+}
+
+.bookmark .tags a:hover { color: #111; }
+
+.bookmark .desc {
+    color: #222;
+    border-left: 0.3em solid #ddd;
+    margin: 0 0 0.2em 0.5em;
+    padding: 0 0 0 0.5em;
+    max-width: 60em;
+}
+
+.bookmark .desc > * {
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+}
+
+.bookmark .desc > :first-child { margin-top: 0; }
+
+.bookmark .desc > :last-child { margin-bottom: 0; }
+
+.bookmark .controls a {
+    color: #888;
+    padding: 0.1em 0.4em;
+    margin: 0 0;
+}
+
+.bookmark .controls a:active { background-color: var(--black-color0); }
+
+.bookmark .date {
+    color: #444;
+    margin-right: 0.2em;
+}
+
+#templates { display: none; }
+
+#blackout {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    opacity: 0.3;
+    background-color: #000;
+    z-index: 100;
+}
+
+#edit-dialog {
+    position: fixed;
+    z-index: 101;
+    top: 25%;
+    left: 50%;
+    margin-left: -20em;
+    margin-bottom: 6em;
+    padding: 1em;
+    width: 36.6em;
+    border: 2px solid var(--black-color0);
+    background-color: var(--bg-color1);
+    color: var(--white-color0);
+}
+
+#edit-dialog td:first-child {
+    vertical-align: middle;
+    text-align: right;
+    width: 4em;
+}
+
+#edit-dialog td { padding: 0.3em; }
+
+#edit-dialog input, #edit-dialog textarea {
+  font-size: inherit;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color0);
+}
+
+#edit-dialog input[type="text"], #edit-dialog textarea {
+  width: 30em;
+  padding: 0.5em;
+  color: var(--fg-color0);
+}
+
+#edit-dialog input[type="button"], #edit-dialog input[type="submit"] {
+  padding: 0.5em 1em;
+  margin-right: 0.5em;
+  color: var(--fg-color0);
+  background-color: var(--bg-color0);
+}
+
+#edit-dialog input[type="button"]:active, #edit-dialog input[type="submit"]:active {
+  background-color: var(--black-color0);
+}
+
+#edit-dialog textarea { height: 5em; }
+
+#edit-view { display: none; }
+
+.nav-button-box { margin: 2em; }
+
+.nav-button-box a {
+  display: none;
+  border: 1px solid #aaa;
+  padding: 0.4em 1em;
+}

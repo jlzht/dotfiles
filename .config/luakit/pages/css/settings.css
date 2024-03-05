@@ -1,0 +1,97 @@
+#settings, table.input {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.setting > td { padding: 0.7rem 1rem; }
+.setting > td.input { -webkit-user-select: none; }
+
+.content-margin {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.setting { padding: 1rem; }
+
+.setting .title {
+    font-family: monospace;
+    font-size: 1.3rem;
+    margin-bottom: 0.5em;
+}
+
+.setting .desc { font-size: 0.9rem; }
+
+.setting input {
+    padding: 0.3em;
+    border none;
+    background-color: var(--black-color1);
+}
+
+.setting.has-error input {
+    border: 1px solid #f34;
+    background: #fdd;
+}
+.setting.has-error .tooltip {
+    display: block;
+    opacity: 1.0;
+}
+
+/* ensures that the gradient connects between <td> */
+#settings { background: var(--black-color1) }
+.setting:not(.disabled) { background: var(--bg-color0); }
+.setting:hover { background: var(--bg-color1); }
+.setting.disabled { background: transparent; }
+
+.tooltip {
+    background: #121215;
+    color: #f66;
+    font-size: 0.8rem;
+    line-height: 1;
+    padding: 0.6em 0.75rem;
+    border-radius: 4px;
+    position: absolute;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+    box-shadow: 0 0 0.2rem black;
+    z-index: 1000;
+    -webkit-backface-visibility: hidden;
+    right: 0;
+    top: 50%;
+    margin-top: -1rem;
+    height: 2rem;
+}
+
+.tooltip::before {
+    content: ' ';
+    display: block;
+    background: inherit;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    transform: rotate(45deg);
+    right: -3px;
+    top: 50%;
+    margin-top: -5px;
+}
+
+.setting label { display: block; }
+
+table.input td {
+    font-family: monospace;
+    padding: 0.1rem 0.3rem;
+}
+table.input th {
+    padding: 0.3rem;
+    font-size: 0.9rem;
+    font-weight: normal;
+    text-align: left;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #777;
+}
+
+.boolean > input { margin-left: 0; }
+.boolean > span { font-weight: bold; }
+.boolean > span[data-value=true] { color: var(--green-color0); }
+.boolean > span[data-value=false] { color: var(--red-color0); }

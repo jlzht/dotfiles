@@ -1,0 +1,48 @@
+table {
+    width: 100%;
+    margin: 1em 0;
+}
+
+th {
+    text-align: left;
+    font-size: 1.3em;
+    font-weight: 100;
+    margin: 1em 0 0.5em 0.5em;
+    -webkit-user-select: none;
+    cursor: default;
+}
+
+th, td {
+    white-space: nowrap;
+}
+
+th:not(:nth-last-child(3)),
+td:not(:nth-last-child(3)) {
+    width: 1px;
+}
+
+th:nth-last-child(3),
+td:nth-last-child(3) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+    width: 100%;
+}
+
+td + td, th + th {
+    padding-left: 1rem;
+}
+
+header > span {
+    padding: 1em;
+}
+
+.state_Enabled {
+    color: var(--green-color0);
+    font-weight: bold;
+}
+
+.state_Disabled {
+    color: var(--red-color0);
+    font-weight: bold;
+}
