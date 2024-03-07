@@ -1,5 +1,9 @@
 local servers = {
   "clangd",
+  "rust_analyzer",
+  "kotlin_language_server",
+  "bashls",
+  "lua_ls"
 }
 
 local settings = {
