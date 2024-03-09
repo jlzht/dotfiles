@@ -1,0 +1,25 @@
+village:
+  build:
+    path: "$HOME/public/docker/images/village"
+    args:
+      - "USERID=1000"
+      - "GROUPID=1000"
+  run:
+    volumes:
+      - "$HOME/desktop/project/village:/home/dev/village"
+      - "$HOME/program/gradle:/home/dev/.gradle"
+      - "$HOME/program/openjdk:/home/dev/openjdk"
+      - "/dev/dri/card0:/dev/dri/card0"
+      - "/dev/dri/renderD128:/dev/dri/renderD128"
+      - "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$WAYLAND_DISPLAY"
+    env:
+      - "XDG_RUNTIME_DIR=/tmp"
+      - "WAYLAND_DISPLAY=$WAYLAND_DISPLAY"
+      - "JAVA_HOME=/home/dev/openjdk"
+    args:
+      - "--user=$(id -u):$(id -g)"
+  exec:
+    args: "-w /home/dev"
+    cmd:
+      shell: "bash"
+      client: ""
