@@ -1,0 +1,30 @@
+[options]
+background = #0E0B16
+overlay = false
+overlay_text_color = #B3C4E0
+overlay_background_color = #171322
+overlay_background_alpha = FF
+overlay_position_bottom = true
+scaling_mode = full
+upscaling_method = linear
+suppress_default_binds = true
+
+[binds]
+q = quit
+j = prev
+k = next
+fv = flip vertical
+fh = flip horizontal
+r = rotate by 90
+z = zoom 1
+<Shift+Z> = zoom -1
+gg = goto 1
+<Shift+G> = goto -1
+d = exec rm $imv_current_file 
+p = exec wl-copy $imv_current_file
+c = center
+<Up> = pan 0 50
+<Down> = pan 0 -50 
+<Left> = pan 50 0 
+<Right> = pan -50 0
+<space> = toggle_playing
