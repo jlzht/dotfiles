@@ -19,8 +19,6 @@ return require("packer").startup(function(use)
   use {
     -- LSP
     'neovim/nvim-lspconfig',
-    'williamboman/mason.nvim',
-    'williamboman/mason-lspconfig.nvim',
   }
   use {
     -- Treesitter
@@ -73,12 +71,6 @@ return require("packer").startup(function(use)
   }
   use {
     -- Notes
-    {
-      'iamcco/markdown-preview.nvim',
-      run = function()
-        vim.fn["mkdp#util#install"]()
-      end
-    },
-    'renerocksai/telekasten.nvim'
+    'lervag/vimtex'
   }
 end)

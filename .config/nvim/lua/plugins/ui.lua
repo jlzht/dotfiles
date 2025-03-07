@@ -22,7 +22,7 @@ local highlights = {
   background = { bg = c.bl1, fg = c.fg1 },
   buffer_visible = { fg = c.fg2, bg = c.bl1 },
   buffer_selected = { fg = c.fg0, bg = c.bg3},
-  modified = { fg = c.cy0, bg = c.bg3 },
+  modified = { fg = c.cy0, bg = c.bl1 }, --
   modified_visible = { fg = c.cy0, bg = c.bl1 },
   modified_selected = { fg = c.cy1, bg = c.bg3},
   warning = {bg = c.bl1},

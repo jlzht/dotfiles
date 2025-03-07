@@ -1,5 +1,8 @@
 require('lint').linters_by_ft = {
-  lua = {'selene',}
+  kotlin = {'ktlint'},
+  python = {'ruff'},
+  cpp = {'cpplint'},
+  c = {'cpplint'}
 }
 
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {

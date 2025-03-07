@@ -84,7 +84,7 @@ hl.syntax = {
   String = {fg = c.gr0},
   Character = {fg = c.gr0},
   Number = {fg = c.gr0},
-  Boolean = {fg = c.bl1},
+  Boolean = {fg = c.yw1},
   Float = {fg = c.gr0},
   Identifier = {fg = c.wh0},
   Function = {fg = c.gr1,fmt="bold"},

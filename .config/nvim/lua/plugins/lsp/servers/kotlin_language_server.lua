@@ -1,6 +1,6 @@
 return {
 	settings = {
-		cmd = { "kotlin-language-server" },
-		filetypes = { "kotlin" },
+	  cmd = { "kotlin-language-server" },
+		filetypes = { "kotlin" }
 	},
 }
